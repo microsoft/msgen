@@ -1,0 +1,22 @@
+.alert-info {
+    background-color: darkorange;
+    color: white;
+}
+
+.alert-info .reference {
+    color: white;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.orange {
+    color:#d83b01;
+}
+
+.green {
+    color:#004b1c;
+}
+
+.blue {
+    color:#00188f;
+}
