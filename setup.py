@@ -22,7 +22,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/x-rst',
     platforms='any',
-    url='https://github.com/MicrosoftGenomics/msgen',
+    url='https://github.com/microsoft/msgen',
     license='MIT',
     packages=['msgen_cli'],
     py_modules=['msgen_cli.msgen'],
