@@ -13,7 +13,7 @@ import malibuargs
 # Version must be valid form for StrictVersion <d>.<d>.<d> for the sort
 # to work properly and find the latest version.  More details at:
 # http://epydoc.sourceforge.net/stdlib/distutils.version.StrictVersion-class.html
-VERSION = '0.9.0'
+VERSION = '0.9.1'
 
 def warn_for_package_update(current_version):
     """Check for updated version of msgen and warn if a newer version is available"""
