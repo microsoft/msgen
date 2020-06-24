@@ -3,9 +3,9 @@ msgen
 
 | ``msgen`` is a command-line client for the Microsoft Genomics service.
 | You can find more detailed documentation for it here: https://docs.microsoft.com/azure/genomics/
-| Latest release notes: `Release notes v0.9.0`_
+| Latest release notes: `Release notes v0.9.1`_
 
-.. _Release notes: #release-notes-v0.9.0
+.. _Release notes: #release-notes-v0.9.1
 
 Installation
 ---------------
@@ -81,7 +81,9 @@ Release notes v0.9.1
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 No breaking changes since ``v0.9.0``.
 
-| **Changed the project link on PyPI to the new url for the source code (this repository)**
+| **Updated the project link**
+
+Changed the project link on `PyPI <https://pypi.org/project/msgen/>`_ to the new url for the source code on GitHub (this repository).
 
 Release notes v0.9.0
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
