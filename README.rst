@@ -77,6 +77,12 @@ of the following:
 ``cancel``  Sends a request to cancel processing of the workflow specified by ``--workflow-id``. See also ``msgen help cancel``.
 ==========  =====
 
+Release notes v0.9.1
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+No breaking changes since ``v0.9.0``.
+
+| **Changed the project link on PyPI to the new url for the source code (this repository)**
+
 Release notes v0.9.0
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 No breaking changes since ``v0.8.x``.
