@@ -7,6 +7,8 @@
 
 import sys
 from datetime import datetime
+import json as JSON
+import pkgutil
 import malibuworkflow
 import malibuargs
 
@@ -17,7 +19,7 @@ VERSION = '0.9.1'
 
 def warn_for_package_update(current_version):
     """Check for updated version of msgen and warn if a newer version is available"""
-    pypiRoot = "https://pypi.python.org"
+    pypiRoot = JSON.loads(pkgutil.get_data(__package__, 'data/settings.json'))['pypiroot']
     connect_timeout = 0.1
     read_timeout = 0.1
     url = pypiRoot

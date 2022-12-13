@@ -5,3 +5,6 @@
 *.pyc
 /.vs/msgen/v15
 /docs/build
+/build
+/dist
+/msgen.egg-info

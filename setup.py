@@ -25,6 +25,7 @@ setup(
     url='https://github.com/microsoft/msgen',
     license='MIT',
     packages=['msgen_cli'],
+    package_data={'':['msgen_cli/data/*']},
     py_modules=['msgen_cli.msgen'],
     entry_points={
         'console_scripts': 'msgen=msgen_cli.msgen:main',
@@ -42,4 +43,5 @@ setup(
     ],
 
     keywords='azure genomics',
+    include_package_data=True,
 )
