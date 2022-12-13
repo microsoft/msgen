@@ -15,41 +15,6 @@ import malibuargs
 # http://epydoc.sourceforge.net/stdlib/distutils.version.StrictVersion-class.html
 VERSION = '0.9.1'
 
-def warn_for_package_update(current_version):
-    """Check for updated version of msgen and warn if a newer version is available"""
-    pypiRoot = "https://pypi.python.org"
-    connect_timeout = 0.1
-    read_timeout = 0.1
-    url = pypiRoot
-
-    try:
-        import requests
-        from distutils.version import StrictVersion
-
-        # Construct the URL to get the msgen package information from pypi
-        #   and extract pypi's version information from the payload
-        url = "{0}/pypi/{1}/json".format(pypiRoot, malibuargs.PACKAGE_NAME)
-        json = requests.get(url, timeout=(connect_timeout, read_timeout)).json()
-        if "releases" not in json:
-            raise ValueError()
-        versions = json["releases"].keys()
-        if len(versions) == 0:
-            return
-        versions.sort(key=StrictVersion, reverse=True)
-        if current_version < versions[0]:
-            print "\n*** INFO ***" \
-                  "\nA newer version of msgen is available.  Please consider upgrading to v{0:s}." \
-                  "\n    To upgrade, run: pip install --upgrade msgen" \
-                  "\n".format(versions[0])
-    except ValueError:
-        print "\n*** INFO ***" \
-              "\nInvalid JSON received by {0} when checking for updates." \
-              "\n".format(url)
-    except (requests.Timeout, requests.ConnectionError, requests.exceptions.RequestException):
-        print "\n*** INFO ***" \
-              "\nUnable to connect to {0} to check for updates." \
-              "\n".format(pypiRoot)
-
 def _command(func, args):
     """Perform a command using command-line arguments
     func: A method of the malibuworkflow.WorkflowExecutor class"""
@@ -92,8 +57,6 @@ def main():
     # Display logon banner
     print "Microsoft Genomics command-line client v{0}".format(VERSION)
     print "Copyright (c) {0} Microsoft. All rights reserved.".format(datetime.utcnow().year)
-
-    warn_for_package_update(VERSION)
 
     malibuargs.parse_and_run(sys.argv, post_workflow, list_workflows, cancel_workflow, get_workflow_status, print_help)
 
