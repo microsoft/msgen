@@ -1,3 +1,7 @@
+Important Announcement - 12/3/2024
+========
+The Microsoft Genomics service will be retired on January 6, 2025.  This repository will soon host the binary executables to enable customers to continue to obtain the exact same results as their historical usage.  We recommend new and existing customers use the latest Microsoft OSS solutions in genomics such as [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) and [GA4GH TES on Azure](https://github.com/microsoft/ga4gh-tes).
+
 msgen
 ========
 
