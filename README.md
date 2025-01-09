@@ -1,6 +1,5 @@
-# Important Announcement - 12/3/2024
-
-The Microsoft Genomics service will be retired on **January 6, 2025**.  The existing Python code in this repository has been moved to the `deprecated` folder. This repository will soon host the binary executables to enable customers to continue obtaining the exact same results as their historical usage. 
+# Retirement notice
+The Microsoft Genomics service has been retired.  This repository will soon host the binary executables to enable customers to continue obtaining the exact same results as their historical usage. 
 
 We recommend new and existing customers use the latest Microsoft OSS solutions in genomics such as:  
 - [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure)  
