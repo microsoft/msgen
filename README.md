@@ -7,11 +7,7 @@ We recommend new and existing customers use the latest Microsoft OSS solutions i
 
 # Update 1/23/2025
 
-`msgen.ps1` and `run-on-azure-vm.sh` are now code-complete for the release of the binary executables, except, the actual binaries have not yet been released yet pending completion of internal reviews.  Thus, the `msgen.ps1` script will fail when it attempts to download it.  We will update this README when the binaries are available for download.
-
-```powershell
-$msgenDownloadUrl = "https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip"
-```
+`msgen.ps1` and `run-on-azure-vm.sh` are now code-complete for the release of the binary executables, except, the actual binaries have not been released yet, pending completion of internal reviews.  Thus, the `msgen.ps1` script will fail when it attempts to download it.  We will update this README when the binaries are available for download.  Instructions are avaialble here: https://github.com/microsoft/msgen/wiki
 
 ---
 
