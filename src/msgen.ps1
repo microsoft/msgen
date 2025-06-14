@@ -15,6 +15,10 @@ param (
 
 $ErrorActionPreference = "Stop"
 
+$javaInstallerBinaryName = "zulu8.36.0.1-ca-jdk8.0.202-win_x64.msi"
+$javaInstallerPath = "$env:TEMP\$javaInstallerBinaryName"
+$javaDownloadUrl = "https://www.azul.com/core-post-download/?endpoint=zulu&uuid=88dfbd5a-84d2-4fa9-92ee-5ef2cd0c1902"
+$defaultJavaPath = "C:\java\bin\java.exe"
 $azCopyDownloadUrl = "https://aka.ms/downloadazcopy-v10-windows"
 $azCopyInstallDir = "C:\azcopy"
 $tempDir = "D:\temp"
@@ -71,12 +75,25 @@ try {
     # Download input files
     Write-Host "Authenticating AZCOPY with the user-assigned managed identity..."
     & "$azCopyInstallDir\azcopy.exe" login --identity --identity-resource-id $identityResourceId
+    
 
     Write-Host "Downloading input files..."
     & "$azCopyInstallDir\azcopy.exe" cp $inputUrl1 "$tempDir\inputs"
     if (![string]::IsNullOrEmpty($inputUrl2)) {
         & "$azCopyInstallDir\azcopy.exe" cp $inputUrl2 "$tempDir\inputs"
     }
+
+    if (!(Test-Path $defaultJavaPath)) {
+        Write-Host "Java not found, downloading installer..."
+        (New-Object Net.WebClient).DownloadFile($javaDownloadUrl, $javaInstallerPath)
+        Write-Host "Installing Java..."
+        Start-Process -FilePath "msiexec.exe" -ArgumentList "/quiet /i `"$javaInstallerPath`" INSTALLDIR=C:\java\" -Wait
+        if ($LASTEXITCODE -ne 0) { throw "Java installation failed. Exit code: $LASTEXITCODE" }
+        Write-Host "Java installed successfully."
+    } else {
+        Write-Host "Java is already installed."
+    }
+
 
     # Download and unzip msgen-oss
     Write-Host "Downloading msgen-oss..."
