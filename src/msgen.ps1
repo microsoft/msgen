@@ -4,7 +4,10 @@ param (
     [string]$outputUrlPrefix,
     [string]$identityResourceId,
 
-    # Optional parameters for deleting the VM's resource group on completion
+     # Optional parameters
+    [string]$msgenDownloadUrl = "https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip",
+
+     # Optional parametersfor deleting the VM's resource group on completion
     [string]$subscriptionId = $null,
     [string]$resourceGroupName = $null,
     [string]$vmName = $null
@@ -15,10 +18,17 @@ $ErrorActionPreference = "Stop"
 $azCopyDownloadUrl = "https://aka.ms/downloadazcopy-v10-windows"
 $azCopyInstallDir = "C:\azcopy"
 $tempDir = "D:\temp"
-$msgenDownloadUrl = "https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip"
 $hg38m1xUrl = "https://datasetmsgen.blob.core.windows.net/dataset/hg38m1x/*"
 $hg38m1xIdxUrl = "https://datasetmsgen.blob.core.windows.net/dataset/hg38m1x.idx/*"
 $logsZipPath = "$tempDir\logs\logs.zip"
+$dotnetRuntimeUrl = "https://builds.dotnet.microsoft.com/dotnet/Runtime/9.0.6/dotnet-runtime-9.0.6-win-x64.exe"
+$dotnetRuntimeInstallerPath = "$tempDir\dotnet-runtime-9.0.6-win-x64.exe"
+
+# Function to check if .NET 9 Runtime is installed
+function Is-DotNet9Installed {
+    $runtimes = & dotnet --list-runtimes 2>$null
+    return $runtimes -match "9\."
+}
 
 try {
     # Create directories if they don't exist
@@ -73,6 +83,27 @@ try {
     & "$azCopyInstallDir\azcopy.exe" cp $msgenDownloadUrl "$tempDir" --recursive
     Expand-Archive -Path "$tempDir\msgen-oss.zip" -DestinationPath "$tempDir\msgen" -Force
 
+    # Download needed dotnet version
+    if (Is-DotNet9Installed) {
+        Write-Host ".NET 9 runtime is already installed." -ForegroundColor Green
+    } else {
+        Write-Host ".NET 9 runtime not found. Installing..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri $dotnetRuntimeUrl -OutFile $dotnetRuntimeInstallerPath
+
+        # Install silently (no UI)
+        Start-Process -FilePath $dotnetRuntimeInstallerPath -ArgumentList "/install", "/quiet", "/norestart" -Wait
+
+        # Clean up
+        Remove-Item $dotnetRuntimeInstallerPath
+        
+        # Confirm installation
+        if (Is-DotNet9Installed) {
+            Write-Host ".NET 9 runtime was successfully installed." -ForegroundColor Green
+        } else {
+            Write-Host "Installation failed or .NET 9 runtime not detected." -ForegroundColor Red
+        }
+    }
+
     # Run msgen-oss
     Write-Host "Running msgen-oss..."
     & "$tempDir\msgen\msgen-oss.exe" $tempDir "$tempDir\inputs" "$tempDir\outputs" "$tempDir\logs" "$tempDir\resources" "R=hg38m1x;GERC=GVCF;BGZIP=True"
@@ -104,53 +135,54 @@ try {
 
     Write-Host "Completed genomics successfully."
     
-    # Delete VM resouce group if set
-    if ($subscriptionId -ne $null -and $resourceGroupName -ne $null -and $vmName -ne $null) {
-        Write-Host "Deleting this VM now..."
-
-        Write-Host "Installing Azure CLI..."
-
-        # Azure CLI MSI installer URL
-        $azureCliInstallerUrl = "https://aka.ms/installazurecliwindows"
-        $installerPath = "$env:TEMP\AzureCLIInstaller.msi"
-
-        # Download Azure CLI installer using WebClient
-        Write-Host "Downloading Azure CLI installer from $azureCliInstallerUrl..."
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($azureCliInstallerUrl, $installerPath)
-
-        # Install Azure CLI silently
-        Write-Host "Installing Azure CLI..."
-        Start-Process -FilePath "msiexec.exe" -ArgumentList "/I `"$installerPath`" /quiet /norestart" -Wait
-
-        # Cleanup the installer
-        Remove-Item -Path $installerPath -Force
-        Write-Host "Azure CLI installed successfully."
-
-        # Add Azure CLI to PATH
-        $azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
-        if (-not ($env:PATH -like "*$azPath*")) {
-            $env:PATH += ";$azPath"
-        }
-
-        # Step 2: Authenticate using User Assigned Managed Identity (UAMI)
-        Write-Host "Authenticating using User Assigned Managed Identity..."
-        $loginResult = az login --identity --username $identityResourceId --query '[0].id' -o tsv
-
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "Failed to authenticate with the User Assigned Managed Identity. Exiting..."
-            exit 1
-        }
-        Write-Host "Authentication successful."
-
-        az account set --subscription $subscriptionId
-
-        Write-Host "Deleting the VM's resource group..."
-        az group delete --name $resourceGroupName --yes --no-wait
-
-        Write-Host "VM resource group deletion initiated. Everything complete."
-    }
 } catch {
     Write-Host "An error occurred: $($_.Exception.Message)"
     exit 1
+}
+
+# Delete VM resouce group if set
+if ($subscriptionId -ne $null -and $resourceGroupName -ne $null -and $vmName -ne $null) {
+    Write-Host "Deleting this VM now..."
+
+    Write-Host "Installing Azure CLI..."
+
+    # Azure CLI MSI installer URL
+    $azureCliInstallerUrl = "https://aka.ms/installazurecliwindows"
+    $installerPath = "$env:TEMP\AzureCLIInstaller.msi"
+
+    # Download Azure CLI installer using WebClient
+    Write-Host "Downloading Azure CLI installer from $azureCliInstallerUrl..."
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($azureCliInstallerUrl, $installerPath)
+
+    # Install Azure CLI silently
+    Write-Host "Installing Azure CLI..."
+    Start-Process -FilePath "msiexec.exe" -ArgumentList "/I `"$installerPath`" /quiet /norestart" -Wait
+
+    # Cleanup the installer
+    Remove-Item -Path $installerPath -Force
+    Write-Host "Azure CLI installed successfully."
+
+    # Add Azure CLI to PATH
+    $azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
+    if (-not ($env:PATH -like "*$azPath*")) {
+        $env:PATH += ";$azPath"
+    }
+
+    # Step 2: Authenticate using User Assigned Managed Identity (UAMI)
+    Write-Host "Authenticating using User Assigned Managed Identity..."
+    $loginResult = az login --identity --resource-id $identityResourceId --query '[0].id' -o tsv
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Failed to authenticate with the User Assigned Managed Identity. Exiting..."
+        exit 1
+    }
+    Write-Host "Authentication successful."
+
+    az account set --subscription $subscriptionId
+
+    Write-Host "Deleting the VM's resource group..."
+    az group delete --name $resourceGroupName --yes --no-wait
+
+    Write-Host "VM resource group deletion initiated. Everything complete."
 }

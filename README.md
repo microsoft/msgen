@@ -5,9 +5,7 @@ We recommend new and existing customers use the latest Microsoft OSS solutions i
 - [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure)  
 - [GA4GH TES on Azure](https://github.com/microsoft/ga4gh-tes)
 
-# Update 1/23/2025
-
-`msgen.ps1` and `run-on-azure-vm.sh` are now code-complete for the release of the binary executables, except, the actual binaries have not been released yet, pending completion of internal reviews.  Thus, the `msgen.ps1` script will fail when it attempts to download it.  We will update this README when the binaries are available for download.  Instructions are avaialble here: https://github.com/microsoft/msgen/wiki
+Instructions are available here: https://github.com/microsoft/msgen/wiki
 
 ---
 
