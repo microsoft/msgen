@@ -7,7 +7,7 @@ param (
      # Optional parameters
     [string]$msgenDownloadUrl = "https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip",
 
-     # Optional parametersfor deleting the VM's resource group on completion
+     # Optional parameters for deleting the VM's resource group on completion
     [string]$subscriptionId = $null,
     [string]$resourceGroupName = $null,
     [string]$vmName = $null

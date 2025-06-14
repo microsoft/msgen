@@ -14,8 +14,8 @@ VM_SIZE="${9:-Standard_D64d_v5}"
 VM_NAME="${STEM_NAME}-vm"
 ADMIN_USERNAME="azureuser"
 PASSWORD="$(< /dev/urandom tr -dc 'A-Za-z0-9' | head -c 16)!"
-SCRIPT_URL="https://raw.githubusercontent.com/microsoft/msgen/refs/heads/main/src/msgen.ps1"
-MSGEN_BINARIES_URL="https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip"
+SCRIPT_URL="https://raw.githubusercontent.com/microsoft/msgen/refs/heads/release-june-13-2025/src/msgen.ps1"
+MSGEN_BINARIES_URL="https://sarobertamenn.blob.core.windows.net/inputs/msgen-oss.zip"
 SUBSCRIPTION_ID=$(az account show --query id -o tsv | tr -d '\r')
 
 cleanup() {
