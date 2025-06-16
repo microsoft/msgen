@@ -35,7 +35,7 @@ Notwithstanding any other terms, you may reverse engineer this software to the e
 
 ---
 
-## Component: **zulu8.36.0.1-ca-jdk8.0.202-win_x64.msi**  
+## Component: **zulu8.84.0.15-ca-jdk8.0.442-win_x64.msi**  
 **Source:** https://www.azul.com/downloads/?package=jdk#zulu  
 **License:** [GPL v2 with Classpath Exception](https://openjdk.org/legal/gplv2+ce.html)
 
