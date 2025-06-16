@@ -15,18 +15,18 @@ param (
 
 $ErrorActionPreference = "Stop"
 
-$javaInstallerBinaryName = "zulu8.36.0.1-ca-jdk8.0.202-win_x64.msi"
-$javaInstallerPath = "$env:TEMP\$javaInstallerBinaryName"
-$javaDownloadUrl = "https://www.azul.com/core-post-download/?endpoint=zulu&uuid=88dfbd5a-84d2-4fa9-92ee-5ef2cd0c1902"
-$defaultJavaPath = "C:\java\bin\java.exe"
 $azCopyDownloadUrl = "https://aka.ms/downloadazcopy-v10-windows"
-$azCopyInstallDir = "C:\azcopy"
-$tempDir = "D:\temp"
+$azCopyInstallDir = "C:\azcopy" 
+$tempDir = $env:TEMP
 $hg38m1xUrl = "https://datasetmsgen.blob.core.windows.net/dataset/hg38m1x/*"
 $hg38m1xIdxUrl = "https://datasetmsgen.blob.core.windows.net/dataset/hg38m1x.idx/*"
 $logsZipPath = "$tempDir\logs\logs.zip"
 $dotnetRuntimeUrl = "https://builds.dotnet.microsoft.com/dotnet/Runtime/9.0.6/dotnet-runtime-9.0.6-win-x64.exe"
 $dotnetRuntimeInstallerPath = "$tempDir\dotnet-runtime-9.0.6-win-x64.exe"
+$javaInstallerBinaryName = "zulu8.36.0.25-ca-jdk8.0.452-win_x64.msi"
+$javaInstallerPath = "$tempDir\$javaInstallerBinaryName"
+$javaDownloadUrl = "https://cdn.azul.com/zulu/bin/zulu8.84.0.15-ca-jdk8.0.442-win_x64.msi"
+$defaultJavaPath = "C:\java\bin\java.exe"
 
 # Function to check if .NET 9 Runtime is installed
 function Is-DotNet9Installed {
