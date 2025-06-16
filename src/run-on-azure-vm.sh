@@ -1,22 +1,22 @@
 #!/bin/bash
 set -e
 
-AZURE_LOCATION="${1:-westus}"
-STEM_NAME="${2:-msgen2025}"
-RESOURCE_GROUP="${3:-${STEM_NAME}-vm}"
-IDENTITY_RESOURCE_GROUP="${4:-${STEM_NAME}-identity}"
-IDENTITY_NAME="${5:-${STEM_NAME}-identity}"
-VM_SIZE="${6:-Standard_D64d_v5}"
-INPUT_URL1="${7}"
-INPUT_URL2="${8}"
-OUTPUT_URL_PREFIX="${9}"
+INPUT_URL1="${1}"
+INPUT_URL2="${2}"
+OUTPUT_URL_PREFIX="${3}"
+AZURE_LOCATION="${4:-westus2}"
+STEM_NAME="${5:-msgen2025}"
+RESOURCE_GROUP="${6:-${STEM_NAME}-vm}"
+IDENTITY_RESOURCE_GROUP="${7:-${STEM_NAME}-identity}"
+IDENTITY_NAME="${8:-${STEM_NAME}-identity}"
+VM_SIZE="${9:-Standard_D64d_v5}"
 
 VM_NAME="${STEM_NAME}-vm"
 ADMIN_USERNAME="azureuser"
 PASSWORD="$(< /dev/urandom tr -dc 'A-Za-z0-9' | head -c 16)!"
 SCRIPT_URL="https://raw.githubusercontent.com/microsoft/msgen/refs/heads/main/src/msgen.ps1"
-
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+MSGEN_BINARIES_URL="https://datasetmsgen.blob.core.windows.net/dataset/msgen-oss/msgen-oss.zip"
+SUBSCRIPTION_ID=$(az account show --query id -o tsv | tr -d '\r')
 
 cleanup() {
   read -p "Do you want to delete the resource group '$RESOURCE_GROUP'? (y/n): " CONFIRM
@@ -51,10 +51,10 @@ else
   echo "Managed identity $IDENTITY_NAME already exists. Skipping creation."
 fi
 
-IDENTITY_ID=$(az identity show --name "$IDENTITY_NAME" --resource-group "$IDENTITY_RESOURCE_GROUP" --query id -o tsv)
+IDENTITY_ID=$(az identity show --name "$IDENTITY_NAME" --resource-group "$IDENTITY_RESOURCE_GROUP" --query id -o tsv | tr -d '\r')
 
 echo "Assigning Contributor role to the managed identity for the resource group $RESOURCE_GROUP..."
-IDENTITY_OBJECT_ID=$(az identity show --name "$IDENTITY_NAME" --resource-group "$IDENTITY_RESOURCE_GROUP" --query principalId -o tsv)
+IDENTITY_OBJECT_ID=$(az identity show --name "$IDENTITY_NAME" --resource-group "$IDENTITY_RESOURCE_GROUP" --query principalId -o tsv | tr -d '\r')
 
 # Assign the Contributor role using the object ID and specifying the principal type
 az role assignment create \
@@ -70,7 +70,7 @@ LATEST_IMAGE=$(az vm image list \
   --sku 2022-datacenter-azure-edition \
   --architecture x64 \
   --all \
-  --query "[?offer=='WindowsServer' && sku=='2022-datacenter-azure-edition'].{Version: version, URN: urn} | sort_by(@, &Version)[-1].URN" -o tsv)
+  --query "[?offer=='WindowsServer' && sku=='2022-datacenter-azure-edition'].{Version: version, URN: urn} | sort_by(@, &Version)[-1].URN" -o tsv | tr -d '\r')
 echo "Selected image: $LATEST_IMAGE"
 
 echo "Creating virtual machine $VM_NAME in resource group $RESOURCE_GROUP..."
@@ -86,7 +86,7 @@ az vm create \
   --enable-vtpm
 
 
-VM_ID=$(az vm show --name "$VM_NAME" --resource-group "$RESOURCE_GROUP" --query id -o tsv)
+VM_ID=$(az vm show --name "$VM_NAME" --resource-group "$RESOURCE_GROUP" --query id -o tsv | tr -d '\r')
 echo "Assigning managed identity $IDENTITY_NAME to virtual machine $VM_NAME..."
 az vm identity assign --identities "$IDENTITY_ID" --ids "$VM_ID"
 
@@ -105,6 +105,7 @@ if [[ -n "$INPUT_URL2" ]]; then
 fi
 COMMAND_TO_EXECUTE+=" -outputUrlPrefix $OUTPUT_URL_PREFIX"
 COMMAND_TO_EXECUTE+=" -identityResourceId $IDENTITY_ID"
+COMMAND_TO_EXECUTE+=" -msgenDownloadUrl $MSGEN_BINARIES_URL"
 COMMAND_TO_EXECUTE+=" -subscriptionId $SUBSCRIPTION_ID"
 COMMAND_TO_EXECUTE+=" -resourceGroupName $RESOURCE_GROUP"
 COMMAND_TO_EXECUTE+=" -vmName $VM_NAME"
