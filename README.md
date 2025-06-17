@@ -1,5 +1,5 @@
 # Retirement notice
-The Microsoft Genomics service has been retired.  This repository will soon host the binary executables to enable customers to continue obtaining the exact same results as their historical usage. 
+The Microsoft Genomics service has been retired.  This repository contains scripts and links to binary executables to enable customers to continue obtaining the exact same results as their historical usage. 
 
 We recommend new and existing customers use the latest Microsoft OSS solutions in genomics such as:  
 - [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure)  
